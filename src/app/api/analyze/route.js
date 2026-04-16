@@ -1,5 +1,7 @@
 // POST /api/analyze
 // Runs AI analysis on a token. Accepts tokenId or full token object.
+export const maxDuration = 60; // Set timeout to 60 seconds for Vercel
+
 
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
