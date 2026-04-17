@@ -151,17 +151,19 @@ export default function SignalCard({ result, tokenName, tokenSymbol, tokenImage 
             <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/25 flex items-center justify-center">
               <Droplets size={14} className="text-blue-400" />
             </div>
-            <span className="text-xs font-medium text-slate-400">Liquidity Ratio</span>
+            <span className="text-xs font-medium text-slate-400">
+              {metrics.realLiquidityUsd !== null && metrics.realLiquidityUsd !== undefined ? 'On-Chain Liquidity' : 'Liquidity Ratio'}
+            </span>
           </div>
           <div className="text-xl font-bold text-slate-100 font-mono">
-            {metrics.liquidityRatio.toFixed(4)}
+            {metrics.realLiquidityUsd !== null && metrics.realLiquidityUsd !== undefined
+              ? Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(metrics.realLiquidityUsd)
+              : metrics.liquidityRatio.toFixed(4)}
           </div>
           <div className="text-xs text-slate-500 mt-1">
-            {metrics.liquidityRatio < 0.02
-              ? 'Very low'
-              : metrics.liquidityRatio < 0.1
-                ? 'Moderate'
-                : 'Healthy'}
+            {metrics.realLiquidityUsd !== null && metrics.realLiquidityUsd !== undefined
+              ? metrics.realLiquidityUsd < 50000 ? 'Dangerously low' : metrics.realLiquidityUsd < 500000 ? 'Moderate' : 'Healthy'
+              : metrics.liquidityRatio < 0.02 ? 'Very low' : metrics.liquidityRatio < 0.1 ? 'Moderate' : 'Healthy'}
           </div>
         </div>
 

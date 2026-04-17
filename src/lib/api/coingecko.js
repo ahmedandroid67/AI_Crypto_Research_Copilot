@@ -111,6 +111,9 @@ export async function getTokenData(id) {
     // Sparkline (7-day)
     sparkline: md.sparkline_7d?.price || [],
 
+    // Contract address for DEX screener/Etherscan
+    contractAddress: data.platforms ? Object.values(data.platforms).find(addr => addr && addr.trim().length > 0) || null : null,
+
     // Timestamps
     genesisDate: data.genesis_date,
     lastUpdated: data.last_updated,

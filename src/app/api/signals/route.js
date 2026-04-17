@@ -5,6 +5,7 @@
 import { getTokenData } from '@/lib/api/coingecko';
 import { getWhaleConcentration } from '@/lib/api/etherscan';
 import { analyzeTokenSignals } from '@/lib/signals/engine';
+import { getRealLiquidity } from '@/lib/api/dexscreener';
 
 export async function POST(request) {
   try {
@@ -29,19 +30,20 @@ export async function POST(request) {
       );
     }
 
-    // ── Try Etherscan for whale data (non-blocking) ───────────────
+    // ── Fetch Etherscan and DexScreener concurrently (non-blocking) 
     let whaleConcentration = null;
-    // We'd need the contract address — CoinGecko often provides it
-    // For now, this is a best-effort lookup
-    try {
-      // Only attempt for ERC-20 tokens (not BTC, etc.)
-      if (tokenData.id && tokenData.id !== 'bitcoin' && tokenData.id !== 'ethereum') {
-        // You could extend getTokenData to expose platforms.ethereum contract address
-        // For now, whale data falls back to null gracefully
-        whaleConcentration = null;
-      }
-    } catch {
-      // Fallback silently
+    let realLiquidityUsd = null;
+
+    const contractAddress = tokenData.contractAddress;
+
+    if (contractAddress) {
+      const [whaleRes, liquidityRes] = await Promise.allSettled([
+        getWhaleConcentration(contractAddress, tokenData.totalSupply),
+        getRealLiquidity(contractAddress)
+      ]);
+
+      if (whaleRes.status === 'fulfilled') whaleConcentration = whaleRes.value;
+      if (liquidityRes.status === 'fulfilled') realLiquidityUsd = liquidityRes.value;
     }
 
     // ── Run signal engine ─────────────────────────────────────────
@@ -49,6 +51,7 @@ export async function POST(request) {
       total_volume: tokenData.volume24h || 0,
       market_cap: tokenData.marketCap || 0,
       whaleConcentration,
+      realLiquidityUsd, // Add the new real metric
     };
 
     const result = analyzeTokenSignals(signalInput);
