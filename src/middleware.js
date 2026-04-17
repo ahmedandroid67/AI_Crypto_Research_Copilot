@@ -8,7 +8,17 @@ import { authMiddleware } from "@clerk/nextjs/server";
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 const isPublicRoute = createRouteMatcher([
+  '/',
+  '/signals(.*)',
+  '/compare(.*)',
+  '/watchlist(.*)',
+  '/token(.*)',
+  '/pricing(.*)',
   '/api/webhooks(.*)',
+  '/api/analyze(.*)',
+  '/api/search(.*)',
+  '/api/trending(.*)',
+  '/api/signals(.*)',
   '/sign-in(.*)',
   '/sign-up(.*)'
 ]);

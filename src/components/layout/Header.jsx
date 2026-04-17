@@ -1,7 +1,7 @@
 'use client';
 // ── Header ─────────────────────────────────────────────────────────
 import Link from 'next/link';
-import { Cpu, TrendingUp, Star, GitCompare } from 'lucide-react';
+import { Cpu, TrendingUp, Star, GitCompare, Radio } from 'lucide-react';
 import { SignInButton, UserButton, useAuth } from '@clerk/nextjs';
 
 export default function Header() {
@@ -40,6 +40,13 @@ export default function Header() {
             >
               <Star size={14} />
               Watchlist
+            </Link>
+            <Link
+              href="/signals"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-emerald-400/80 hover:text-emerald-300 hover:bg-emerald-500/10 transition-all duration-150 font-medium"
+            >
+              <Radio size={14} />
+              Signals
             </Link>
             <Link
               href="/"
